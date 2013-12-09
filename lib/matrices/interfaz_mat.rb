@@ -55,11 +55,11 @@ class MatrixDSL
   end
 end
 
-ejemplo = MatrixDSL.new("Suma") do 
+#ejemplo = MatrixDSL.new("Suma") do 
   
-  option "densa"
-  option "file"
+#  option "densa"
+#  option "console"
   
-  operand [[1,1],[1,1]] 
-  operand [[1,2],[1,1]]
-end
+#  operand [[1,1],[1,1]] 
+#  operand [[1,2],[1,1]]
+#end
