@@ -1,41 +1,65 @@
 
 class MatrixDSL 
-  attr_accessor :op, :act, :modo
+  attr_accessor :operacion, :op, :modo, :show
   
-  def initialize(act,&block)
-    self.act=act
-    self.op=[]
+  def initialize(operacion, &block)
+    @operacion = operacion
+    @op = []
+    @modo = "densa"
+    @show = ""
+    
+    instance_eval &block
+
+    case show
+      when "console" then puts self
+      when "file" 
+        then 
+          File.open('Matrix.txt', 'w') do |f|
+            f.puts self
+          end
+    end
   end
   
   def to_s
-    output = act
-    output << "\n#{'=' * act.size}\n\n"
+    output = "\n #{@operacion}"
+    output << "\n #{'=' * @operacion.size}\n\n"
 
-    op.each_with_index do |index|
-      output << op[index].to_s 
-      output << "\n"
+    op.each_with_index do |opr, index|
+      output << " #{index + 1}. #{opr}\n" 
     end
-
-    output << " = " 
-    output << (op[0]+op[1]).to_s
+    case operacion
+      when "Suma" then output << "  = #{(@op[0]+@op[1]).to_s}\n\n"
+      when "Resta" then output << "  = #{(@op[0]-@op[1]).to_s}\n\n"
+      when "Producto" then output << "  = #{(@op[0]*@op[1]).to_s}\n\n"        
+      else output << " -> Error: Operacion incorrecta\n\n"
+    end
     
     output
   end
   
-  def option(mod)
-    self.modo << mod
+  def option(opt) 
+    case opt
+      when "densa","dispersa" then @modo = opt
+      when "console","file" then @show = opt
+    end
   end
   
-  def operand(f,c,lista)
-    self.op << Matriz.vector(f,c,lista)
-  end    
+  def operand(lista)
+    aux = []
+    lista.each { |i| i.each { |j| aux << j } }
+    
+    case modo
+      when "densa" then op << Matriz_densa.new(lista.size,lista[0].size,aux)
+      when "dispersa" then op << Matriz_dispersa.new(lista.size,lista[0].size,aux)
+    end    
+  end
 end
 
 ejemplo = MatrixDSL.new("Suma") do 
- 
-  operand(2,2,[1,1,1,1])
-  operand(2,2,[1,1,1,1])
   
+  option "densa"
+  option "file"
+  
+  operand [[1,1],[1,1]] 
+  operand [[1,2],[1,1]]
 end
-
-puts ejemplo
